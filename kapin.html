@@ -1,0 +1,2620 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kapin — Подкасты по твоему запросу</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,400;1,9..144,500&family=JetBrains+Mono:wght@400;500&family=Inter+Tight:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #f4ede0;
+    --paper: #ebe1cf;
+    --paper-2: #e3d8c1;
+    --ink: #1a1410;
+    --ink-soft: #3d3329;
+    --muted: #8a7a64;
+    --muted-2: #a89a82;
+    --rust: #c8462a;
+    --rust-dark: #8b2a14;
+    --ochre: #d68a3c;
+    --moss: #5a6b3a;
+    --plum: #4a2838;
+    --teal: #2d5f5a;
+    --line: rgba(26, 20, 16, 0.12);
+    --line-2: rgba(26, 20, 16, 0.06);
+    --grain: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0 0.06 0 0 0 0.4 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body { height: 100%; overflow: hidden; }
+
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Inter Tight', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    position: relative;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: var(--grain);
+    opacity: 0.35;
+    pointer-events: none;
+    z-index: 1;
+    mix-blend-mode: multiply;
+  }
+
+  .app {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    height: 100vh;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* === SIDEBAR === */
+  .sidebar {
+    border-right: 1px solid var(--line);
+    padding: 24px 0 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: rgba(244, 237, 224, 0.6);
+  }
+
+  .sidebar-head {
+    padding: 0 24px 24px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .logo {
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--ink);
+    line-height: 1;
+  }
+
+  .logo-mark {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .logo-mark svg { width: 100%; height: 100%; display: block; }
+
+  .logo-text {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 26px;
+    letter-spacing: -0.035em;
+    display: flex;
+    align-items: baseline;
+    gap: 3px;
+  }
+
+  .logo-text .dot {
+    width: 6px;
+    height: 6px;
+    background: var(--rust);
+    border-radius: 50%;
+    display: inline-block;
+    transform: translateY(-1px);
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+
+  /* === variant text styles === */
+  .logo.v2 .logo-text {
+    font-family: 'Instrument Serif', serif;
+    font-weight: 400;
+    font-size: 30px;
+    letter-spacing: -0.015em;
+  }
+  .logo.v3 .logo-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    font-size: 18px;
+    letter-spacing: -0.01em;
+    text-transform: lowercase;
+  }
+  .logo.v4 .logo-text {
+    font-family: 'Fraunces', serif;
+    font-weight: 900;
+    font-size: 26px;
+    letter-spacing: -0.04em;
+    text-transform: lowercase;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: translateY(-1px) scale(1); }
+    50% { opacity: 0.4; transform: translateY(-1px) scale(0.7); }
+  }
+
+  .tagline {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  .nav {
+    padding: 18px 12px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--ink-soft);
+    transition: all 0.15s ease;
+    position: relative;
+  }
+
+  .nav-item:hover { background: var(--paper); color: var(--ink); }
+  .nav-item.active { background: var(--ink); color: var(--cream); font-weight: 500; }
+  .nav-item.active svg { stroke: var(--cream); }
+
+  .nav-item svg { width: 17px; height: 17px; stroke: currentColor; fill: none; stroke-width: 1.7; flex-shrink: 0; }
+
+  .nav-item .ai-pill {
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    background: var(--rust);
+    color: var(--cream);
+    padding: 2px 5px;
+    border-radius: 4px;
+    letter-spacing: 0.08em;
+    font-weight: 500;
+  }
+  .nav-item.active .ai-pill { background: var(--cream); color: var(--ink); }
+
+  /* create button */
+  .create-btn {
+    margin: 16px 16px 8px;
+    background: var(--ink);
+    color: var(--cream);
+    border: none;
+    border-radius: 12px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .create-btn:hover { background: var(--rust); transform: translateY(-1px); }
+
+  .create-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: var(--grain);
+    opacity: 0.2;
+    mix-blend-mode: overlay;
+    pointer-events: none;
+  }
+
+  .create-btn .plus {
+    width: 22px; height: 22px;
+    background: var(--cream);
+    color: var(--ink);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* subs */
+  .subs-head {
+    padding: 16px 24px 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .subs-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .subs {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 12px 16px;
+  }
+  .subs::-webkit-scrollbar { width: 0; }
+
+  .sub-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s;
+    font-size: 13px;
+  }
+  .sub-item:hover { background: var(--paper); }
+
+  .sub-thumb {
+    width: 26px; height: 26px;
+    border-radius: 6px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--cream);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .sub-thumb::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: var(--grain);
+    opacity: 0.25;
+    mix-blend-mode: overlay;
+  }
+
+  .sub-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--ink-soft);
+  }
+
+  .new-dot {
+    width: 5px; height: 5px;
+    background: var(--rust);
+    border-radius: 50%;
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+
+  /* === MAIN === */
+  .main {
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-bottom: 110px;
+    scroll-behavior: smooth;
+  }
+  .main::-webkit-scrollbar { width: 0; }
+
+  .main-inner {
+    padding: 24px 40px 24px;
+    max-width: 1280px;
+  }
+
+  /* top bar */
+  .top-bar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .search {
+    flex: 1;
+    max-width: 480px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--paper);
+    padding: 11px 18px;
+    border-radius: 100px;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+  }
+  .search:focus-within {
+    border-color: var(--ink);
+    background: var(--cream);
+  }
+  .search input {
+    background: transparent;
+    border: none;
+    outline: none;
+    flex: 1;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--ink);
+  }
+  .search input::placeholder { color: var(--muted); }
+  .search svg { width: 16px; height: 16px; stroke: var(--muted); fill: none; stroke-width: 1.8; flex-shrink: 0; }
+  .search .kbd {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    background: var(--cream);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--muted);
+    border: 1px solid var(--line);
+  }
+
+  .greet {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--muted);
+    margin-left: auto;
+  }
+  .greet strong { color: var(--ink); font-style: normal; font-weight: 500; }
+
+  .top-icon-btn {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: transparent;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .top-icon-btn:hover { background: var(--paper); border-color: var(--ink); }
+  .top-icon-btn svg { width: 16px; height: 16px; stroke: var(--ink); fill: none; stroke-width: 1.7; }
+
+  /* === HERO BANNER (Моя волна) === */
+  .wave-banner {
+    background: linear-gradient(120deg, #1a1410 0%, #3d2418 45%, #c8462a 100%);
+    border-radius: 20px;
+    padding: 36px 40px;
+    margin-bottom: 40px;
+    color: var(--cream);
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 32px;
+    align-items: center;
+    min-height: 220px;
+  }
+
+  .wave-banner::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: var(--grain);
+    opacity: 0.35;
+    mix-blend-mode: overlay;
+    pointer-events: none;
+  }
+
+  .wave-banner::after {
+    content: '';
+    position: absolute;
+    right: -50px;
+    top: -50px;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(214, 138, 60, 0.4), transparent 65%);
+    pointer-events: none;
+  }
+
+  .wave-content { position: relative; z-index: 2; }
+
+  .wave-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--ochre);
+    margin-bottom: 14px;
+    padding: 6px 10px;
+    border: 1px solid rgba(214, 138, 60, 0.4);
+    border-radius: 100px;
+  }
+  .wave-label::before {
+    content: '';
+    width: 5px; height: 5px;
+    background: var(--ochre);
+    border-radius: 50%;
+    box-shadow: 0 0 6px var(--ochre);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  .wave-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 52px;
+    line-height: 0.98;
+    letter-spacing: -0.03em;
+    margin-bottom: 14px;
+  }
+  .wave-title em { font-style: italic; color: var(--ochre); font-weight: 400; }
+
+  .wave-desc {
+    font-size: 14px;
+    line-height: 1.55;
+    color: rgba(244, 237, 224, 0.75);
+    margin-bottom: 22px;
+    max-width: 440px;
+  }
+
+  .wave-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .wave-play {
+    background: var(--cream);
+    color: var(--ink);
+    border: none;
+    padding: 12px 22px;
+    border-radius: 100px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+  }
+  .wave-play:hover { background: var(--ochre); transform: translateY(-1px); }
+  .wave-play svg { width: 12px; height: 12px; fill: currentColor; }
+
+  .wave-secondary {
+    background: rgba(244, 237, 224, 0.12);
+    border: 1px solid rgba(244, 237, 224, 0.2);
+    color: var(--cream);
+    padding: 11px 18px;
+    border-radius: 100px;
+    font-family: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .wave-secondary:hover { background: rgba(244, 237, 224, 0.2); }
+
+  /* hero artwork — vinyl-ish disc with rotating stamp */
+  .wave-art {
+    position: relative;
+    width: 220px;
+    height: 220px;
+    flex-shrink: 0;
+  }
+
+  .vinyl {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle at center,
+      #1a1410 0%, #1a1410 14%,
+      #c8462a 14.5%, #8b2a14 22%,
+      #1a1410 22.5%, #1a1410 30%,
+      #2a1810 30.5%, #1a1410 100%);
+    box-shadow: 0 20px 50px -10px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(232, 219, 196, 0.1);
+    animation: spin-disc 8s linear infinite;
+  }
+
+  @keyframes spin-disc {
+    to { transform: rotate(360deg); }
+  }
+
+  .vinyl::before {
+    content: '';
+    position: absolute;
+    inset: 30%;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--ochre), var(--rust) 70%);
+    box-shadow: inset 0 0 0 2px var(--ink);
+  }
+  .vinyl::after {
+    content: '';
+    position: absolute;
+    inset: 45%;
+    background: var(--ink);
+    border-radius: 50%;
+  }
+
+  .stamp {
+    position: absolute;
+    top: -16px;
+    right: -16px;
+    width: 90px;
+    height: 90px;
+    border: 1px solid var(--cream);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(244, 237, 224, 0.06);
+    backdrop-filter: blur(8px);
+    z-index: 3;
+  }
+
+  .stamp-text {
+    position: absolute;
+    inset: 0;
+    animation: spin-stamp 20s linear infinite;
+  }
+
+  @keyframes spin-stamp {
+    to { transform: rotate(360deg); }
+  }
+
+  .stamp-inner {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 26px;
+    color: var(--cream);
+  }
+
+  /* === SECTION === */
+  .section {
+    margin-bottom: 40px;
+  }
+
+  .section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    margin-bottom: 18px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .section-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 24px;
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  .section-title em { font-style: italic; color: var(--rust); font-weight: 400; }
+  .section-title .count {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    font-style: normal;
+    letter-spacing: 0.1em;
+    margin-left: 4px;
+  }
+
+  .section-link {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+  .section-link:hover { color: var(--ink); }
+
+  /* horizontal scroller */
+  .h-scroll {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 200px;
+    gap: 16px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 8px;
+    scrollbar-width: none;
+    margin: 0 -40px;
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+  .h-scroll::-webkit-scrollbar { display: none; }
+
+  /* card */
+  .card {
+    cursor: pointer;
+    transition: transform 0.25s ease;
+  }
+  .card:hover { transform: translateY(-3px); }
+
+  .card-cover {
+    aspect-ratio: 1;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 12px 28px -14px rgba(26,20,16,0.25), 0 0 0 1px rgba(0,0,0,0.04);
+  }
+
+  .card-cover::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: var(--grain);
+    opacity: 0.32;
+    mix-blend-mode: overlay;
+    pointer-events: none;
+  }
+
+  .card-cover-inner {
+    position: absolute;
+    inset: 0;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    color: var(--cream);
+    z-index: 2;
+  }
+
+  .cc-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    opacity: 0.8;
+  }
+
+  .cc-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 22px;
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+  }
+  .cc-title em { font-style: italic; font-weight: 400; }
+
+  /* hover play overlay */
+  .card-play {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--rust);
+    color: var(--cream);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: all 0.25s;
+    z-index: 3;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  }
+  .card:hover .card-play { opacity: 1; transform: translateY(0); }
+  .card-play:hover { background: var(--ink); }
+  .card-play svg { width: 12px; height: 12px; fill: currentColor; margin-left: 2px; }
+
+  .card-meta {
+    padding: 0 2px;
+  }
+
+  .card-title {
+    font-family: 'Fraunces', serif;
+    font-size: 15px;
+    font-weight: 500;
+    margin-bottom: 2px;
+    line-height: 1.2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  .card-sub {
+    font-size: 12px;
+    color: var(--muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* progress on cards */
+  .card-progress {
+    margin-top: 8px;
+    height: 2px;
+    background: rgba(26, 20, 16, 0.1);
+    border-radius: 1px;
+    overflow: hidden;
+  }
+  .card-progress-fill {
+    height: 100%;
+    background: var(--rust);
+  }
+
+  /* AI generated badge on card */
+  .ai-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(244, 237, 224, 0.95);
+    color: var(--ink);
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8.5px;
+    letter-spacing: 0.1em;
+    z-index: 3;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .ai-badge::before {
+    content: '✦';
+    color: var(--rust);
+  }
+
+  /* === CATEGORIES (chips) === */
+  .cats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .cat {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: 8px 14px;
+    border-radius: 100px;
+    font-size: 13px;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .cat:hover {
+    background: var(--ink);
+    color: var(--cream);
+    border-color: var(--ink);
+  }
+
+  /* === SOCIAL LIVE STRIP === */
+  .live-strip {
+    background: var(--paper);
+    border-radius: 14px;
+    padding: 16px 20px;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 40px;
+    border: 1px solid var(--line);
+  }
+
+  .live-strip-icon {
+    width: 36px; height: 36px;
+    background: var(--ink);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--cream);
+  }
+  .live-strip-icon::before {
+    content: '';
+    width: 8px; height: 8px;
+    background: var(--rust);
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px rgba(200, 70, 42, 0.3);
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+
+  .live-strip-body { min-width: 0; }
+
+  .lf-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .lf-counter { color: var(--rust); }
+
+  .lf-text-wrap {
+    height: 20px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .lf-text-track {
+    transition: transform 0.5s cubic-bezier(0.3, 0.7, 0.2, 1);
+  }
+
+  .lf-text-item {
+    height: 20px;
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 20px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .lf-text-item strong { color: var(--ink); font-weight: 600; }
+  .lf-text-item em { color: var(--rust); font-style: normal; }
+
+  .live-strip-btn {
+    background: transparent;
+    border: 1px solid var(--ink);
+    color: var(--ink);
+    padding: 8px 14px;
+    border-radius: 100px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .live-strip-btn:hover { background: var(--ink); color: var(--cream); }
+
+  /* === PLAYER === */
+  .player {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--ink);
+    color: var(--cream);
+    padding: 14px 24px;
+    display: grid;
+    grid-template-columns: 280px 1fr 280px;
+    gap: 24px;
+    align-items: center;
+    z-index: 100;
+    box-shadow: 0 -20px 40px -10px rgba(0,0,0,0.15);
+  }
+
+  .player::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: var(--grain);
+    opacity: 0.15;
+    pointer-events: none;
+  }
+
+  .now-playing {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .np-cover {
+    width: 56px; height: 56px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--rust) 0%, var(--plum) 100%);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Fraunces', serif;
+    font-weight: 900;
+    font-size: 22px;
+    color: var(--cream);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  }
+  .np-cover::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: var(--grain);
+    opacity: 0.4;
+    mix-blend-mode: overlay;
+  }
+
+  .np-info { min-width: 0; flex: 1; }
+  .np-title {
+    font-family: 'Fraunces', serif;
+    font-size: 15px;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-bottom: 2px;
+  }
+  .np-show {
+    font-size: 11px;
+    color: rgba(244,237,224,0.6);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-family: 'JetBrains Mono', monospace;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .np-like {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    color: rgba(244,237,224,0.6);
+    transition: color 0.2s;
+  }
+  .np-like:hover, .np-like.active { color: var(--rust); }
+  .np-like svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.6; }
+  .np-like.active svg { fill: currentColor; }
+
+  /* center controls */
+  .controls-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .ctrl {
+    background: transparent;
+    border: none;
+    color: var(--cream);
+    cursor: pointer;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    opacity: 0.65;
+    position: relative;
+  }
+  .ctrl:hover { opacity: 1; }
+  .ctrl:active { transform: scale(0.94); }
+  .ctrl svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+
+  .ctrl-play {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: var(--cream);
+    color: var(--ink);
+    opacity: 1;
+  }
+  .ctrl-play:hover { background: var(--rust); color: var(--cream); transform: scale(1.05); }
+  .ctrl-play svg { width: 14px; height: 14px; fill: currentColor; stroke: none; }
+
+  .skip-label {
+    position: absolute;
+    bottom: -10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    opacity: 0.5;
+  }
+
+  .progress-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    max-width: 520px;
+  }
+
+  .time {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: rgba(244,237,224,0.6);
+    min-width: 36px;
+  }
+  .time.right { text-align: right; }
+
+  .waveform {
+    flex: 1;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    gap: 1.5px;
+    cursor: pointer;
+  }
+
+  .wave-bar {
+    flex: 1;
+    background: rgba(244,237,224,0.22);
+    border-radius: 1px;
+    transition: all 0.15s;
+  }
+  .wave-bar.played { background: var(--cream); }
+  .wave-bar.current { background: var(--rust); transform: scaleY(1.3); }
+
+  /* right side */
+  .right-controls {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .right-controls .ctrl {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+  }
+  .right-controls .ctrl:hover { background: rgba(244, 237, 224, 0.08); }
+
+  .speed-btn {
+    background: transparent;
+    border: 1px solid rgba(244,237,224,0.2);
+    color: var(--cream);
+    padding: 5px 9px;
+    border-radius: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .speed-btn:hover { border-color: var(--cream); background: rgba(244, 237, 224, 0.08); }
+
+  .vol-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 4px;
+  }
+
+  .vol-slider {
+    width: 70px;
+    height: 3px;
+    background: rgba(244,237,224,0.2);
+    border-radius: 2px;
+    position: relative;
+    cursor: pointer;
+  }
+  .vol-fill {
+    position: absolute;
+    inset: 0 30% 0 0;
+    background: var(--cream);
+    border-radius: 2px;
+  }
+
+  /* === ASK SHEET (overlay modal for generation) === */
+  .ask-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(26, 20, 16, 0.65);
+    backdrop-filter: blur(6px);
+    z-index: 200;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .ask-backdrop.open { opacity: 1; pointer-events: all; }
+
+  .ask-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -45%) scale(0.96);
+    background: var(--cream);
+    border-radius: 24px;
+    padding: 32px;
+    z-index: 201;
+    width: 560px;
+    max-width: calc(100vw - 32px);
+    max-height: 88vh;
+    overflow-y: auto;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    box-shadow: 0 30px 80px rgba(0,0,0,0.3);
+    border: 1px solid var(--line);
+  }
+  .ask-modal.open {
+    opacity: 1;
+    pointer-events: all;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  .ask-modal::-webkit-scrollbar { width: 0; }
+
+  .ask-modal::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: var(--grain);
+    opacity: 0.25;
+    mix-blend-mode: multiply;
+    pointer-events: none;
+    border-radius: 24px;
+  }
+
+  .ask-modal-content { position: relative; z-index: 1; }
+
+  .ask-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--rust);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .ask-label::before {
+    content: '';
+    width: 20px; height: 1px;
+    background: var(--rust);
+  }
+
+  .ask-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 32px;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+  .ask-title em { font-style: italic; color: var(--rust); }
+
+  .ask-sub {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+
+  .ask-input {
+    width: 100%;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 16px 18px;
+    font-family: inherit;
+    font-size: 16px;
+    color: var(--ink);
+    resize: none;
+    min-height: 60px;
+    line-height: 1.4;
+    outline: none;
+    transition: all 0.2s;
+    margin-bottom: 24px;
+  }
+  .ask-input:focus { border-color: var(--ink); background: var(--cream); }
+  .ask-input::placeholder { color: var(--muted); }
+
+  .ask-section { margin-bottom: 22px; }
+
+  .ask-section-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    margin-bottom: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .opt-row {
+    display: flex;
+    gap: 8px;
+  }
+
+  .opt {
+    flex: 1;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 10px 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .opt:hover { border-color: var(--ink); }
+  .opt.selected { border-color: var(--rust); background: rgba(200, 70, 42, 0.06); }
+
+  .opt-value {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    color: var(--ink);
+    margin-bottom: 1px;
+  }
+  .opt-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .host-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .host-pick {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .host-pick:hover { border-color: var(--ink); }
+  .host-pick.selected { border-color: var(--rust); background: rgba(200, 70, 42, 0.06); }
+
+  .host-pick-avatar {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Fraunces', serif;
+    font-size: 14px;
+    color: var(--cream);
+  }
+
+  .host-pick-name { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 1px; }
+  .host-pick-style { font-size: 10px; color: var(--muted); font-family: 'JetBrains Mono', monospace; text-transform: uppercase; letter-spacing: 0.06em; }
+
+  .ask-cta {
+    width: 100%;
+    background: var(--ink);
+    color: var(--cream);
+    border: none;
+    border-radius: 14px;
+    padding: 14px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s;
+    margin-top: 8px;
+  }
+  .ask-cta:hover { background: var(--rust); }
+  .ask-cta svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+  .ask-foot-note {
+    text-align: center;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 10px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .ask-close {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    transition: all 0.2s;
+  }
+  .ask-close:hover { background: var(--ink); color: var(--cream); }
+  .ask-close svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+
+  /* === TOAST === */
+  .toast {
+    position: fixed;
+    bottom: 110px;
+    left: 50%;
+    transform: translate(-50%, 120%);
+    background: var(--ink);
+    color: var(--cream);
+    border-radius: 14px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    z-index: 150;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.3);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    max-width: 440px;
+    border: 1px solid rgba(244,237,224,0.1);
+  }
+  .toast.show { transform: translate(-50%, 0); opacity: 1; }
+
+  .toast-icon {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: var(--rust);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .toast-icon svg { width: 14px; height: 14px; stroke: var(--cream); fill: none; stroke-width: 2; }
+
+  .toast-text { font-size: 13px; line-height: 1.4; }
+  .toast-text strong { color: var(--ochre); font-weight: 600; }
+  .toast-text small { display: block; color: rgba(244,237,224,0.6); font-size: 11px; margin-top: 2px; }
+
+  .toast-btn {
+    background: var(--cream);
+    color: var(--ink);
+    border: none;
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-left: 8px;
+  }
+
+  /* === art swatches === */
+  .art-rust { background: linear-gradient(135deg, #c8462a, #8b2a14); }
+  .art-moss { background: linear-gradient(135deg, #5a6b3a, #2d3a1a); }
+  .art-plum { background: linear-gradient(135deg, #4a2838, #2a1320); }
+  .art-ochre { background: linear-gradient(135deg, #d68a3c, #a0571e); }
+  .art-teal { background: linear-gradient(135deg, #2d5f5a, #143832); }
+  .art-rust-ochre { background: linear-gradient(135deg, #c8462a 0%, #d68a3c 100%); }
+  .art-ink { background: linear-gradient(135deg, #3d3329 0%, #1a1410 100%); }
+  .art-rust-plum { background: linear-gradient(135deg, #c8462a 0%, #4a2838 100%); }
+
+  /* fade-in */
+  .fade-in { animation: fadeInUp 0.5s ease backwards; }
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* generating shimmer on card */
+  .card.generating .card-cover {
+    background: var(--paper);
+    position: relative;
+  }
+  .card.generating .card-cover::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(200,70,42,0.18), transparent);
+    animation: shimmer 1.8s ease-in-out infinite;
+    z-index: 1;
+  }
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  .card.generating .card-cover-inner {
+    color: var(--ink);
+  }
+
+  .gen-spinner {
+    width: 30px; height: 30px;
+    border: 2px solid rgba(26, 20, 16, 0.15);
+    border-top-color: var(--rust);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-bottom: 12px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .gen-status {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  /* logo switcher panel */
+  .logo-switcher {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--ink);
+    color: var(--cream);
+    border-radius: 16px;
+    padding: 16px;
+    z-index: 500;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+    border: 1px solid rgba(244, 237, 224, 0.1);
+    width: 260px;
+  }
+  .ls-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: rgba(244, 237, 224, 0.5);
+  }
+  .ls-options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  .ls-opt {
+    background: rgba(244, 237, 224, 0.06);
+    color: var(--cream);
+    border: 1.5px solid transparent;
+    padding: 14px 8px 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .ls-opt:hover { background: rgba(244, 237, 224, 0.12); }
+  .ls-opt.active {
+    background: var(--cream);
+    border-color: var(--rust);
+  }
+  .ls-opt-mark {
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .ls-opt-mark svg { width: 100%; height: 100%; }
+  .ls-opt-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: rgba(244, 237, 224, 0.5);
+    letter-spacing: 0.1em;
+  }
+  .ls-opt.active .ls-opt-num { color: var(--ink); }
+  .ls-opt.active .ls-opt-mark svg [data-stroke="dark"] { stroke: var(--ink) !important; }
+  .ls-opt.active .ls-opt-mark svg [data-fill="dark"] { fill: var(--ink) !important; }
+  .ls-opt.active .ls-opt-mark svg [data-fill="cream"] { fill: var(--cream) !important; }
+  .ls-close {
+    background: transparent;
+    border: none;
+    color: rgba(244, 237, 224, 0.4);
+    font-size: 11px;
+    cursor: pointer;
+    text-align: center;
+    padding: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .ls-close:hover { color: var(--cream); }
+
+  /* === AUDIO UPLOAD === */
+  .audio-loader {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 80;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 100px;
+    padding: 6px 14px 6px 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .audio-loader:hover { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+  .audio-loader svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.7; }
+  .audio-loader.loaded {
+    background: rgba(90, 107, 58, 0.15);
+    border-color: var(--moss);
+    color: var(--moss);
+  }
+  .audio-loader.loaded:hover { background: var(--moss); color: var(--cream); }
+  .audio-loader .loader-name {
+    max-width: 140px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.04em;
+  }
+  .audio-loader input { display: none; }
+
+  .drop-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(26, 20, 16, 0.85);
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  .drop-overlay.active { opacity: 1; pointer-events: all; }
+
+  .drop-zone {
+    border: 2px dashed var(--cream);
+    border-radius: 24px;
+    padding: 64px 96px;
+    text-align: center;
+    color: var(--cream);
+  }
+  .drop-zone h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 36px;
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+  .drop-zone h3 em { font-style: italic; color: var(--ochre); }
+  .drop-zone p {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    opacity: 0.6;
+  }
+
+  @media (max-width: 1100px) {
+    .player { grid-template-columns: 1fr 1.5fr; }
+    .right-controls { display: none; }
+  }
+
+  @media (max-width: 860px) {
+    .app { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .main-inner { padding: 20px; }
+    .wave-banner { grid-template-columns: 1fr; padding: 28px; }
+    .wave-title { font-size: 36px; }
+    .wave-art { display: none; }
+    .player { grid-template-columns: 1fr; padding: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-head">
+      <div class="logo v2" id="logo">
+        <span class="logo-mark" id="logoMark">
+          <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="2" width="36" height="36" rx="8" fill="#1a1410"/>
+            <text x="20" y="29" text-anchor="middle" font-family="Fraunces, serif" font-weight="900" font-size="26" font-style="italic" fill="#f4ede0">K</text>
+            <circle cx="30" cy="11" r="2.5" fill="#c8462a"/>
+          </svg>
+        </span>
+        <span class="logo-text">Kapin<span class="dot"></span></span>
+      </div>
+      <div class="tagline">Подкасты по запросу</div>
+    </div>
+
+    <nav class="nav">
+      <div class="nav-item active">
+        <svg viewBox="0 0 24 24"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg>
+        Главная
+      </div>
+      <div class="nav-item">
+        <svg viewBox="0 0 24 24"><path d="M2 12 C 5 6, 8 18, 12 12 S 19 6, 22 12"/></svg>
+        Моя волна
+        <span class="ai-pill">ИИ</span>
+      </div>
+      <div class="nav-item">
+        <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Подкасты
+      </div>
+      <div class="nav-item">
+        <svg viewBox="0 0 24 24"><path d="M4 4h12l4 4v12H4z"/><path d="M16 4v4h4M9 13h6M9 17h6"/></svg>
+        Моя коллекция
+      </div>
+      <div class="nav-item">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+        История
+      </div>
+    </nav>
+
+    <button class="create-btn" id="createBtn">
+      <span class="plus">+</span>
+      <span>Создать эпизод</span>
+    </button>
+
+    <div class="subs-head">
+      <span class="subs-label">Подписки</span>
+      <span class="subs-label" style="font-size: 16px; cursor: pointer;">+</span>
+    </div>
+
+    <div class="subs">
+      <div class="sub-item">
+        <div class="sub-thumb" style="background: var(--rust)">а</div>
+        <span class="sub-name">Антропология</span>
+        <span class="new-dot"></span>
+      </div>
+      <div class="sub-item">
+        <div class="sub-thumb" style="background: var(--plum)">м</div>
+        <span class="sub-name">Между строк</span>
+      </div>
+      <div class="sub-item">
+        <div class="sub-thumb" style="background: var(--moss)">т</div>
+        <span class="sub-name">Тихие воды</span>
+        <span class="new-dot"></span>
+      </div>
+      <div class="sub-item">
+        <div class="sub-thumb" style="background: var(--ochre)">р</div>
+        <span class="sub-name">Радиолаб</span>
+      </div>
+      <div class="sub-item">
+        <div class="sub-thumb" style="background: var(--teal)">н</div>
+        <span class="sub-name">Норм</span>
+      </div>
+      <div class="sub-item">
+        <div class="sub-thumb" style="background: #8b4513">к</div>
+        <span class="sub-name">Кухня писателя</span>
+      </div>
+      <div class="sub-item">
+        <div class="sub-thumb" style="background: #4a6741">п</div>
+        <span class="sub-name">Полдень</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="main-inner">
+
+      <!-- top bar -->
+      <div class="top-bar">
+        <div class="search">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="text" placeholder="Найти эпизод, шоу или ведущего…">
+          <span class="kbd">⌘K</span>
+        </div>
+        <span class="greet">Добрый вечер, <strong>Кирилл</strong></span>
+        <button class="top-icon-btn" title="Уведомления">
+          <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+        </button>
+      </div>
+
+      <!-- WAVE BANNER -->
+      <section class="wave-banner">
+        <div class="wave-content">
+          <div class="wave-label">Моя волна · ИИ-подбор</div>
+          <h1 class="wave-title">Твой <em>персональный</em><br>поток подкастов</h1>
+          <p class="wave-desc">Бесконечная лента 5-минутных эпизодов под твой вкус. Слушай или попроси сделать про любую тему.</p>
+          <div class="wave-actions">
+            <button class="wave-play" id="wavePlay">
+              <svg viewBox="0 0 24 24"><path d="M6 4l16 8-16 8z"/></svg>
+              Включить волну
+            </button>
+            <button class="wave-secondary" id="askInBanner">+ Свой эпизод</button>
+          </div>
+        </div>
+        <div class="wave-art">
+          <div class="vinyl"></div>
+          <div class="stamp">
+            <svg class="stamp-text" viewBox="0 0 100 100">
+              <defs>
+                <path id="circ" d="M 50,50 m -36,0 a 36,36 0 1,1 72,0 a 36,36 0 1,1 -72,0"/>
+              </defs>
+              <text style="font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.18em; fill: #f4ede0;">
+                <textPath href="#circ">• МОЯ ВОЛНА • БЕСКОНЕЧНО • МОЯ ВОЛНА •</textPath>
+              </text>
+            </svg>
+            <span class="stamp-inner">∞</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- LIVE STRIP -->
+      <div class="live-strip">
+        <div class="live-strip-icon"></div>
+        <div class="live-strip-body">
+          <div class="lf-label">
+            <span class="lf-counter">1 247 человек слушают сейчас</span>
+          </div>
+          <div class="lf-text-wrap">
+            <div class="lf-text-track" id="lfTrack">
+              <div class="lf-text-item"><strong>Аня</strong> сделала эпизод <em>«Японская чайная церемония»</em></div>
+              <div class="lf-text-item"><strong>Михаил</strong> запросил <em>«Бертран Рассел простыми словами»</em></div>
+              <div class="lf-text-item"><strong>София</strong> слушает <em>«Феномен дежавю»</em></div>
+              <div class="lf-text-item"><strong>Тимур</strong> сделал серию <em>«История джаза в 7 эпизодах»</em></div>
+              <div class="lf-text-item"><strong>Лера</strong> поделилась <em>«Как работают ароматы»</em></div>
+            </div>
+          </div>
+        </div>
+        <button class="live-strip-btn" id="liveAsk">Создать свой</button>
+      </div>
+
+      <!-- CONTINUE -->
+      <section class="section">
+        <div class="section-head">
+          <h2 class="section-title">Продолжить <em>слушать</em> <span class="count">— 4</span></h2>
+          <span class="section-link">всё →</span>
+        </div>
+        <div class="h-scroll">
+
+          <div class="card" data-title="Когда озеро возвращает память" data-show="Тихие воды" data-color="#5a6b3a" data-letter="т" data-len="22:08">
+            <div class="card-cover art-moss">
+              <div class="card-cover-inner">
+                <div class="cc-tag">№ 12 / Тихие воды</div>
+                <div class="cc-title">Когда озеро<br>возвращает <em>память</em></div>
+              </div>
+              <button class="card-play"><svg viewBox="0 0 24 24"><path d="M6 4l16 8-16 8z"/></svg></button>
+            </div>
+            <div class="card-meta">
+              <div class="card-title">Когда озеро возвращает память</div>
+              <div class="card-sub">Тихие воды · осталось 14 мин</div>
+              <div class="card-progress"><div class="card-progress-fill" style="width: 67%"></div></div>
+            </div>
+          </div>
+
+          <div class="card" data-title="Бунин и груши в саду" data-show="Кухня писателя" data-color="#8b4513" data-letter="к" data-len="48:12">
+            <div class="card-cover" style="background: linear-gradient(135deg, #8b4513, #4d2710)">
+              <div class="card-cover-inner">
+                <div class="cc-tag">№ 03 / Кухня писателя</div>
+                <div class="cc-title">Бунин и <em>груши</em><br>в саду</div>
+              </div>
+              <button class="card-play"><svg viewBox="0 0 24 24"><path d="M6 4l16 8-16 8z"/></svg></button>
+            </div>
+            <div class="card-meta">
+              <div class="card-title">Бунин и груши в саду</div>
+              <div class="card-sub">Кухня писателя · осталось 38 мин</div>
+              <div class="card-progress"><div class="card-progress-fill" style="width: 22%"></div></div>
+            </div>
+          </div>
+
+          <div class="card" data-title="Голос, который мы забыли" data-show="Между строк" data-color="#4a2838" data-letter="м" data-len="54:12">
+            <div class="card-cover art-plum">
+              <div class="card-cover-inner">
+                <div class="cc-tag">№ 47 / Между строк</div>
+                <div class="cc-title">Голос, <em>который</em><br>мы забыли</div>
+              </div>
+              <button class="card-play"><svg viewBox="0 0 24 24"><path d="M6 4l16 8-16 8z"/></svg></button>
+            </div>
+            <div class="card-meta">
+              <div class="card-title">Голос, который мы забыли</div>
+              <div class="card-sub">Между строк · 47:28 из 54:12</div>
+              <div class="card-progress"><div class="card-progress-fill" style="width: 88%"></div></div>
+            </div>
+          </div>
+
+          <div class="card" data-title="Почему нам нравится скука" data-show="Норм" data-color="#2d5f5a" data-letter="н" data-len="38:14">
+            <div class="card-cover art-teal">
+              <div class="card-cover-inner">
+                <div class="cc-tag">№ 142 / Норм</div>
+                <div class="cc-title">Почему нам<br>нравится <em>скука</em></div>
+              </div>
+              <button class="card-play"><svg viewBox="0 0 24 24"><path d="M6 4l16 8-16 8z"/></svg></button>
+            </div>
+            <div class="card-meta">
+              <div class="card-title">Почему нам нравится скука</div>
+              <div class="card-sub">Норм · осталось 18 мин</div>
+              <div class="card-progress"><div class="card-progress-fill" style="width: 52%"></div></div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- MY EPISODES (AI generated) -->
+      <section class="section">
+        <div class="section-head">
+          <h2 class="section-title">Твои <em>эпизоды</em> <span class="count">— ИИ генерация</span></h2>
+          <span class="section-link" id="createMore">+ создать ещё →</span>
+        </div>
+        <div class="h-scroll" id="myList">
+
+          <div class="card" data-title="Как устроена память дельфинов" data-show="Алиса · академический" data-color="#d68a3c" data-letter="д" data-len="5:12" data-ai="1">
+            <div class="card-cover art-ochre">
+              <div class="ai-badge">ИИ · Алиса</div>
+              <div class="card-cover-inner">
+                <div class="cc-tag">5 МИН · НАУКА</div>
+                <div class="cc-title">Память <em>дельфинов</em></div>
+              </div>
+              <button class="card-play"><svg viewBox="0 0 24 24"><path d="M6 4l16 8-16 8z"/></svg></button>
+            </div>
+            <div class="card-meta">
+              <div class="card-title">Как устроена память дельфинов</div>
+              <div class="card-sub">Создан вчера · 5:12</div>
+            </div>
+          </div>
+
+          <div class="card" data-title="История одного шрифта Helvetica" data-show="Тимур · сторителлинг" data-color="#c8462a" data-letter="H" data-len="5:48" data-ai="1">
+            <div class="card-cover art-rust">
+              <div class="ai-badge">ИИ · Тимур</div>
+              <div class="card-cover-inner">
+                <div class="cc-tag">5 МИН · ДИЗАЙН</div>
+                <div class="cc-title">Шрифт, <em>который</em><br>стал миром</div>
+              </div>
+              <button class="card-play"><svg viewBox="0 0 24 24"><path d="M6 4l16 8-16 8z"/></svg></button>
+            </div>
+            <div class="card-meta">
+              <div class="card-title">История одного шрифта Helvetica</div>
+              <div class="card-sub">Создан 3 дня назад · 5:48</div>
+            </div>
+          </div>
+
+          <div class="card" data-title="Что такое стоицизм за 5 минут" data-show="Рома · скептик" data-color="#4a2838" data-letter="С" data-len="4:54" data-ai="1">
+            <div class="card-cover art-rust-plum">
+              <div class="ai-badge">ИИ · Рома</div>
+              <div class="card-cover-inner">
+                <div class="cc-tag">5 МИН · ФИЛОСОФИЯ</div>
+                <div class="cc-title">Стоицизм<br>за <em>5 минут</em></div>
+              </div>
+              <button class="card-play"><svg viewBox="0 0 24 24"><path d="M6 4l16 8-16 8z"/></svg></button>
+            </div>
+            <div class="card-meta">
+              <div class="card-title">Что такое стоицизм за 5 минут</div>
+              <div class="card-sub">Создан неделю назад · 4:54</div>
+            </div>
+          </div>
+
+          <!-- placeholder "create" card -->
+          <div class="card" id="addCard" style="cursor: pointer">
+            <div class="card-cover" style="background: var(--paper); border: 1.5px dashed var(--line); box-shadow: none;">
+              <div class="card-cover-inner" style="color: var(--ink); align-items: center; justify-content: center; text-align: center;">
+                <div style="font-family: 'Fraunces', serif; font-size: 40px; line-height: 1; margin-bottom: 12px; color: var(--rust)">+</div>
+                <div style="font-family: 'Fraunces', serif; font-size: 17px; line-height: 1.15; font-style: italic;">Создать<br>новый эпизод</div>
+              </div>
+            </div>
+            <div class="card-meta">
+              <div class="card-title" style="color: var(--muted); font-style: italic;">Введи тему — получишь подкаст</div>
+              <div class="card-sub">за ~45 секунд</div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- CATEGORIES -->
+      <section class="section">
+        <div class="section-head">
+          <h2 class="section-title">По <em>теме</em></h2>
+        </div>
+        <div class="cats">
+          <div class="cat" data-topic="Истории и биографии">📖 Истории и биографии</div>
+          <div class="cat" data-topic="Наука простыми словами">🔬 Наука простыми словами</div>
+          <div class="cat" data-topic="История XX века">⌛ История XX века</div>
+          <div class="cat" data-topic="Философия">🜔 Философия</div>
+          <div class="cat" data-topic="Психология">⌬ Психология</div>
+          <div class="cat" data-topic="Дизайн и архитектура">▣ Дизайн и архитектура</div>
+          <div class="cat" data-topic="Технологии без хайпа">⌽ Технологии без хайпа</div>
+          <div class="cat" data-topic="Города мира">🗺 Города мира</div>
+          <div class="cat" data-topic="Музыка">♪ Музыка</div>
+          <div class="cat" data-topic="Книги">❦ Книги</div>
+          <div class="cat" data-topic="Кино">▶ Кино</div>
+        </div>
+      </section>
+
+      <!-- TODAY IN AIR (ready feed) -->
+      <section class="section">
+        <div class="section-head">
+          <h2 class="section-title">Сегодня <em>в эфире</em> <span class="count">— обновлено час назад</span></h2>
+          <span class="section-link">обновить →</span>
+        </div>
+        <div class="h-scroll">
+
+          <div class="card" data-title="Почему карты искажают мир" data-show="Алиса · академический" data-color="#d68a3c" data-letter="К" data-len="5:12" data-ai="1">
+            <div class="card-cover art-rust-ochre">
+              <div class="ai-badge">ИИ · популярное</div>
+              <div class="card-cover-inner">
+                <div class="cc-tag">5 МИН · ГЕОГРАФИЯ</div>
+                <div class="cc-title">Почему карты<br><em>искажают</em> мир</div>
+              </div>
+              <button class="card-play"><svg viewBox="0 0 24 24"><path d="M6 4l16 8-16 8z"/></svg></button>
+            </div>
+            <div class="card-meta">
+              <div class="card-title">Почему карты искажают мир</div>
+              <div class="card-sub">Алиса · 12,4К слушали</div>
+            </div>
+          </div>
+
+          <div class="card" data-title="Жёлтое такси Нью-Йорка" data-show="Тимур · сторителлинг" data-color="#2d5f5a" data-letter="Ж" data-len="4:48" data-ai="1">
+            <div class="card-cover art-teal">
+              <div class="ai-badge">ИИ · новое</div>
+              <div class="card-cover-inner">
+                <div class="cc-tag">5 МИН · ГОРОДА</div>
+                <div class="cc-title">Жёлтое <em>такси</em><br>Нью-Йорка</div>
+              </div>
+              <button class="card-play"><svg viewBox="0 0 24 24"><path d="M6 4l16 8-16 8z"/></svg></button>
+            </div>
+            <div class="card-meta">
+              <div class="card-title">Жёлтое такси Нью-Йорка</div>
+              <div class="card-sub">Тимур · 8,1К слушали</div>
+            </div>
+          </div>
+
+          <div class="card" data-title="Квалиа, или красное для тебя" data-show="Рома · скептик" data-color="#4a2838" data-letter="Q" data-len="6:02" data-ai="1">
+            <div class="card-cover art-plum">
+              <div class="ai-badge">ИИ · популярное</div>
+              <div class="card-cover-inner">
+                <div class="cc-tag">5 МИН · ФИЛОСОФИЯ</div>
+                <div class="cc-title">Квалиа,<br>или <em>красное</em></div>
+              </div>
+              <button class="card-play"><svg viewBox="0 0 24 24"><path d="M6 4l16 8-16 8z"/></svg></button>
+            </div>
+            <div class="card-meta">
+              <div class="card-title">Квалиа, или красное для тебя</div>
+              <div class="card-sub">Рома · 5,3К слушали</div>
+            </div>
+          </div>
+
+          <div class="card" data-title="Откуда взялась идея отпуска" data-show="Лера · энтузиаст" data-color="#c8462a" data-letter="О" data-len="4:21" data-ai="1">
+            <div class="card-cover art-rust">
+              <div class="ai-badge">ИИ · новое</div>
+              <div class="card-cover-inner">
+                <div class="cc-tag">5 МИН · ИСТОРИЯ</div>
+                <div class="cc-title">Откуда взялась<br>идея <em>отпуска</em></div>
+              </div>
+              <button class="card-play"><svg viewBox="0 0 24 24"><path d="M6 4l16 8-16 8z"/></svg></button>
+            </div>
+            <div class="card-meta">
+              <div class="card-title">Откуда взялась идея отпуска</div>
+              <div class="card-sub">Лера · 9,8К слушали</div>
+            </div>
+          </div>
+
+          <div class="card" data-title="Феномен дежавю" data-show="Алиса · академический" data-color="#3d3329" data-letter="Д" data-len="5:34" data-ai="1">
+            <div class="card-cover art-ink">
+              <div class="ai-badge">ИИ · новое</div>
+              <div class="card-cover-inner">
+                <div class="cc-tag">5 МИН · МОЗГ</div>
+                <div class="cc-title">Феномен<br><em>дежавю</em></div>
+              </div>
+              <button class="card-play"><svg viewBox="0 0 24 24"><path d="M6 4l16 8-16 8z"/></svg></button>
+            </div>
+            <div class="card-meta">
+              <div class="card-title">Феномен дежавю</div>
+              <div class="card-sub">Алиса · 3,2К слушают сейчас</div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- HUMAN SHOWS -->
+      <section class="section">
+        <div class="section-head">
+          <h2 class="section-title">Шоу с <em>авторами</em></h2>
+          <span class="section-link">все шоу →</span>
+        </div>
+        <div class="h-scroll">
+
+          <div class="card" data-title="Племя, которое читает по дыму" data-show="Антропология · Михаил Берг" data-color="#c8462a" data-letter="а" data-len="42:18">
+            <div class="card-cover art-rust">
+              <div class="card-cover-inner">
+                <div class="cc-tag">№ 31 / Антропология</div>
+                <div class="cc-title">Племя,<br>что <em>читает</em> по дыму</div>
+              </div>
+              <button class="card-play"><svg viewBox="0 0 24 24"><path d="M6 4l16 8-16 8z"/></svg></button>
+            </div>
+            <div class="card-meta">
+              <div class="card-title">Племя, которое читает по дыму</div>
+              <div class="card-sub">Михаил Берг · 42 мин</div>
+            </div>
+          </div>
+
+          <div class="card" data-title="Звук, которого нет" data-show="Радиолаб · команда RL" data-color="#d68a3c" data-letter="р" data-len="1:12:40">
+            <div class="card-cover art-ochre">
+              <div class="card-cover-inner">
+                <div class="cc-tag">№ 184 / Радиолаб</div>
+                <div class="cc-title">Звук,<br>которого <em>нет</em></div>
+              </div>
+              <button class="card-play"><svg viewBox="0 0 24 24"><path d="M6 4l16 8-16 8z"/></svg></button>
+            </div>
+            <div class="card-meta">
+              <div class="card-title">Звук, которого нет</div>
+              <div class="card-sub">Команда RL · 1ч 12 мин</div>
+            </div>
+          </div>
+
+          <div class="card" data-title="Голос, который мы забыли" data-show="Между строк · Анна Мендель" data-color="#4a2838" data-letter="м" data-len="54:12">
+            <div class="card-cover art-plum">
+              <div class="card-cover-inner">
+                <div class="cc-tag">№ 47 / Между строк</div>
+                <div class="cc-title">Голос, <em>который</em><br>мы забыли</div>
+              </div>
+              <button class="card-play"><svg viewBox="0 0 24 24"><path d="M6 4l16 8-16 8z"/></svg></button>
+            </div>
+            <div class="card-meta">
+              <div class="card-title">Голос, который мы забыли</div>
+              <div class="card-sub">Анна Мендель · 54 мин</div>
+            </div>
+          </div>
+
+          <div class="card" data-title="Книги, что остаются" data-show="Полдень · Ира Ким" data-color="#4a6741" data-letter="п" data-len="28:30">
+            <div class="card-cover" style="background: linear-gradient(135deg, #4a6741, #2a3a22)">
+              <div class="card-cover-inner">
+                <div class="cc-tag">№ 22 / Полдень</div>
+                <div class="cc-title">Книги, что<br><em>остаются</em></div>
+              </div>
+              <button class="card-play"><svg viewBox="0 0 24 24"><path d="M6 4l16 8-16 8z"/></svg></button>
+            </div>
+            <div class="card-meta">
+              <div class="card-title">Книги, что остаются</div>
+              <div class="card-sub">Ира Ким · 28 мин</div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<!-- PLAYER -->
+<div class="player">
+  <div class="now-playing">
+    <div class="np-cover" id="npCover">Э</div>
+    <div class="np-info">
+      <div class="np-title" id="npTitle">Kapin · добро пожаловать</div>
+      <div class="np-show" id="npShow">Нажми ▶ или попроси сделать эпизод</div>
+    </div>
+    <button class="np-like" id="likeBtn" title="В избранное">
+      <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </button>
+  </div>
+
+  <div class="controls-wrap">
+    <div class="controls">
+      <button class="ctrl" title="Случайно">
+        <svg viewBox="0 0 24 24"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
+      </button>
+      <button class="ctrl" title="-15">
+        <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 3v6h6"/></svg>
+        <span class="skip-label">15</span>
+      </button>
+      <button class="ctrl ctrl-play" id="playBtn">
+        <svg id="playIcon" viewBox="0 0 24 24"><path d="M6 4l16 8-16 8z"/></svg>
+      </button>
+      <button class="ctrl" title="+30">
+        <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v6h-6"/></svg>
+        <span class="skip-label">30</span>
+      </button>
+      <button class="ctrl" title="Повтор">
+        <svg viewBox="0 0 24 24"><path d="M17 1l4 4-4 4M3 11V9a4 4 0 0 1 4-4h14M7 23l-4-4 4-4M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+      </button>
+    </div>
+
+    <div class="progress-row">
+      <span class="time" id="currentTime">0:00</span>
+      <div class="waveform" id="waveform"></div>
+      <span class="time right" id="totalTime">0:00</span>
+    </div>
+  </div>
+
+  <div class="right-controls">
+    <button class="ctrl" title="Транскрипт">
+      <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+    </button>
+    <button class="ctrl" title="В очередь">
+      <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h10M18 14v8M22 18h-8"/></svg>
+    </button>
+    <button class="ctrl" title="Поделиться">
+      <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg>
+    </button>
+    <button class="speed-btn" id="speedBtn">1.0×</button>
+    <div class="vol-wrap">
+      <svg width="14" height="14" viewBox="0 0 24 24" style="stroke: rgba(244,237,224,0.7); fill: none; stroke-width: 1.8"><path d="M11 5L6 9H2v6h4l5 4zM15.5 8.5a5 5 0 0 1 0 7"/></svg>
+      <div class="vol-slider"><div class="vol-fill"></div></div>
+    </div>
+    <button class="ctrl" title="На весь экран">
+      <svg viewBox="0 0 24 24"><path d="M3 8V3h5M21 8V3h-5M3 16v5h5M21 16v5h-5"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- ASK MODAL -->
+<div class="ask-backdrop" id="askBackdrop"></div>
+<div class="ask-modal" id="askModal">
+  <button class="ask-close" id="askClose">
+    <svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+  </button>
+  <div class="ask-modal-content">
+    <div class="ask-label">Создание эпизода</div>
+    <h2 class="ask-title">О чём <em>послушать</em>?</h2>
+    <p class="ask-sub">Опиши тему. ИИ напишет сценарий, озвучит и склеит — за минуту.</p>
+
+    <textarea class="ask-input" id="askInput" rows="2" placeholder="Например: краткая история блокчейна для скептиков"></textarea>
+
+    <div class="ask-section">
+      <div class="ask-section-title">Длина</div>
+      <div class="opt-row" id="lenRow">
+        <div class="opt" data-len="2"><div class="opt-value">2′</div><div class="opt-label">коротко</div></div>
+        <div class="opt selected" data-len="5"><div class="opt-value">5′</div><div class="opt-label">в самый раз</div></div>
+        <div class="opt" data-len="15"><div class="opt-value">15′</div><div class="opt-label">подробно</div></div>
+      </div>
+    </div>
+
+    <div class="ask-section">
+      <div class="ask-section-title">Ведущий</div>
+      <div class="host-list" id="hostList">
+        <div class="host-pick selected" data-host="Алиса" data-style="академический" data-color="#d68a3c">
+          <div class="host-pick-avatar" style="background: linear-gradient(135deg, #d68a3c, #8b5a1e)">А</div>
+          <div><div class="host-pick-name">Алиса</div><div class="host-pick-style">академический</div></div>
+        </div>
+        <div class="host-pick" data-host="Тимур" data-style="сторителлинг" data-color="#2d5f5a">
+          <div class="host-pick-avatar" style="background: linear-gradient(135deg, #2d5f5a, #143832)">Т</div>
+          <div><div class="host-pick-name">Тимур</div><div class="host-pick-style">сторителлинг</div></div>
+        </div>
+        <div class="host-pick" data-host="Рома" data-style="скептик" data-color="#4a2838">
+          <div class="host-pick-avatar" style="background: linear-gradient(135deg, #4a2838, #2a1320)">Р</div>
+          <div><div class="host-pick-name">Рома</div><div class="host-pick-style">скептик</div></div>
+        </div>
+        <div class="host-pick" data-host="Лера" data-style="энтузиаст" data-color="#c8462a">
+          <div class="host-pick-avatar" style="background: linear-gradient(135deg, #c8462a, #8b2a14)">Л</div>
+          <div><div class="host-pick-name">Лера</div><div class="host-pick-style">энтузиаст</div></div>
+        </div>
+      </div>
+    </div>
+
+    <button class="ask-cta" id="askCta">
+      Сгенерировать эпизод
+      <svg viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+    </button>
+    <div class="ask-foot-note">пока готовится — включим похожее из ленты</div>
+  </div>
+</div>
+
+<!-- AUDIO LOADER -->
+<label class="audio-loader" id="audioLoader">
+  <svg viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+  <span id="loaderText">Загрузить mp3</span>
+  <input type="file" id="audioInput" accept="audio/*">
+</label>
+
+<!-- DROP ZONE OVERLAY -->
+<div class="drop-overlay" id="dropOverlay">
+  <div class="drop-zone">
+    <h3>Брось <em>mp3</em> сюда</h3>
+    <p>и весь плеер заиграет</p>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <div class="toast-icon">
+    <svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
+  </div>
+  <div class="toast-text">
+    Готово: <strong id="toastTitle">твой эпизод</strong>
+    <small id="toastSub">Алиса · 5:12</small>
+  </div>
+  <button class="toast-btn" id="toastBtn">Слушать</button>
+</div>
+
+<script>
+  // ============ REAL AUDIO PLAYBACK ============
+  const realAudio = new Audio();
+  realAudio.preload = 'auto';
+  let hasAudio = false;
+  const audioInput = document.getElementById('audioInput');
+  const audioLoader = document.getElementById('audioLoader');
+  const loaderText = document.getElementById('loaderText');
+  const dropOverlay = document.getElementById('dropOverlay');
+
+  function loadAudioFile(file) {
+    if (!file || !file.type.startsWith('audio')) return;
+    if (realAudio.src) URL.revokeObjectURL(realAudio.src);
+    realAudio.src = URL.createObjectURL(file);
+    realAudio.load();
+    hasAudio = true;
+    audioLoader.classList.add('loaded');
+    const shortName = file.name.length > 22 ? file.name.slice(0, 20) + '…' : file.name;
+    loaderText.innerHTML = `<span class="loader-name">${shortName}</span>`;
+    realAudio.addEventListener('loadedmetadata', () => {
+      duration = realAudio.duration;
+      renderProgress();
+    }, { once: true });
+  }
+
+  audioInput.addEventListener('change', e => {
+    if (e.target.files[0]) loadAudioFile(e.target.files[0]);
+  });
+
+  // drag and drop on the whole page
+  let dragCounter = 0;
+  document.addEventListener('dragenter', e => {
+    e.preventDefault();
+    dragCounter++;
+    if (e.dataTransfer.types.includes('Files')) {
+      dropOverlay.classList.add('active');
+    }
+  });
+  document.addEventListener('dragleave', e => {
+    dragCounter--;
+    if (dragCounter <= 0) {
+      dropOverlay.classList.remove('active');
+      dragCounter = 0;
+    }
+  });
+  document.addEventListener('dragover', e => e.preventDefault());
+  document.addEventListener('drop', e => {
+    e.preventDefault();
+    dropOverlay.classList.remove('active');
+    dragCounter = 0;
+    const file = e.dataTransfer.files[0];
+    if (file) loadAudioFile(file);
+  });
+
+  // sync UI with real audio events
+  realAudio.addEventListener('play', () => syncPlayState(true));
+  realAudio.addEventListener('pause', () => syncPlayState(false));
+  realAudio.addEventListener('ended', () => { syncPlayState(false); progress = 0; renderProgress(); });
+  realAudio.addEventListener('timeupdate', () => {
+    if (realAudio.duration) {
+      progress = realAudio.currentTime / realAudio.duration;
+      renderProgressBars();
+    }
+  });
+
+  function syncPlayState(playing) {
+    isPlaying = playing;
+    if (playing) {
+      playIcon.innerHTML = '<path d="M6 4h4v16H6zM14 4h4v16h-4z"/>';
+    } else {
+      playIcon.innerHTML = '<path d="M6 4l16 8-16 8z"/>';
+    }
+  }
+
+  // ============ LIVE FEED TICKER ============
+  const lfTrack = document.getElementById('lfTrack');
+  let lfIdx = 0;
+  const lfItems = lfTrack.children.length;
+  setInterval(() => {
+    lfIdx = (lfIdx + 1) % lfItems;
+    lfTrack.style.transform = `translateY(-${lfIdx * 20}px)`;
+  }, 3000);
+
+  // ============ ASK MODAL ============
+  const askModal = document.getElementById('askModal');
+  const askBackdrop = document.getElementById('askBackdrop');
+  const askInput = document.getElementById('askInput');
+  const askClose = document.getElementById('askClose');
+
+  function openAsk(prefill) {
+    if (prefill) askInput.value = prefill;
+    askModal.classList.add('open');
+    askBackdrop.classList.add('open');
+    setTimeout(() => askInput.focus(), 250);
+  }
+
+  function closeAsk() {
+    askModal.classList.remove('open');
+    askBackdrop.classList.remove('open');
+  }
+
+  askBackdrop.addEventListener('click', closeAsk);
+  askClose.addEventListener('click', closeAsk);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeAsk();
+  });
+
+  document.getElementById('createBtn').addEventListener('click', () => openAsk(''));
+  document.getElementById('askInBanner').addEventListener('click', () => openAsk(''));
+  document.getElementById('liveAsk').addEventListener('click', () => openAsk(''));
+  document.getElementById('createMore').addEventListener('click', () => openAsk(''));
+  document.getElementById('addCard').addEventListener('click', () => openAsk(''));
+
+  // category chips
+  document.querySelectorAll('.cat').forEach(cat => {
+    cat.addEventListener('click', () => openAsk(cat.dataset.topic));
+  });
+
+  // length & host selection
+  document.querySelectorAll('#lenRow .opt').forEach(opt => {
+    opt.addEventListener('click', () => {
+      document.querySelectorAll('#lenRow .opt').forEach(x => x.classList.remove('selected'));
+      opt.classList.add('selected');
+    });
+  });
+
+  document.querySelectorAll('#hostList .host-pick').forEach(host => {
+    host.addEventListener('click', () => {
+      document.querySelectorAll('#hostList .host-pick').forEach(x => x.classList.remove('selected'));
+      host.classList.add('selected');
+    });
+  });
+
+  // ============ GENERATION ============
+  const myList = document.getElementById('myList');
+  const addCard = document.getElementById('addCard');
+  const toast = document.getElementById('toast');
+  const toastTitle = document.getElementById('toastTitle');
+  const toastSub = document.getElementById('toastSub');
+  const toastBtn = document.getElementById('toastBtn');
+
+  document.getElementById('askCta').addEventListener('click', () => {
+    const topic = askInput.value.trim();
+    if (topic.length < 3) {
+      askInput.focus();
+      askInput.style.borderColor = 'var(--rust)';
+      return;
+    }
+    const len = document.querySelector('#lenRow .opt.selected').dataset.len;
+    const host = document.querySelector('#hostList .host-pick.selected');
+    const hostName = host.dataset.host;
+    const hostColor = host.dataset.color;
+    const hostStyle = host.dataset.style;
+
+    closeAsk();
+    askInput.value = '';
+
+    // create generating card
+    const card = document.createElement('div');
+    card.className = 'card generating fade-in';
+    card.innerHTML = `
+      <div class="card-cover" style="background: ${hostColor}22; border: 1px solid ${hostColor}66;">
+        <div class="card-cover-inner" style="align-items: center; justify-content: center; text-align: center;">
+          <div class="gen-spinner"></div>
+          <div class="gen-status" id="genStatus">Пишем сценарий…</div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <div class="card-title">${topic}</div>
+        <div class="card-sub">${hostName} · готовится…</div>
+      </div>
+    `;
+    myList.insertBefore(card, addCard);
+
+    // start playing teaser
+    const teaser = document.querySelector('.card[data-ai="1"]');
+    if (teaser) playFromCard(teaser);
+
+    // animate generation stages
+    const stages = ['Пишем сценарий…', 'Выбираем интонацию…', 'Синтезируем голос…', 'Сводим звук…'];
+    let si = 0;
+    const statusEl = card.querySelector('#genStatus');
+    const interval = setInterval(() => {
+      si = (si + 1) % stages.length;
+      statusEl.textContent = stages[si];
+    }, 1500);
+
+    setTimeout(() => {
+      clearInterval(interval);
+      card.classList.remove('generating');
+      const letter = topic[0].toUpperCase();
+      const sec = Math.floor(Math.random() * 50 + 10);
+      const dur = `${len}:${sec.toString().padStart(2,'0')}`;
+      const shortTopic = topic.length > 30 ? topic.slice(0, 28) + '…' : topic;
+
+      card.innerHTML = `
+        <div class="card-cover" style="background: linear-gradient(135deg, ${hostColor}, #1a1410); position: relative; overflow: hidden;">
+          <div class="ai-badge">ИИ · только что</div>
+          <div class="card-cover-inner">
+            <div class="cc-tag">${len} МИН · ТВОЙ ЗАПРОС</div>
+            <div class="cc-title" style="font-size: 19px;">${shortTopic}</div>
+          </div>
+          <button class="card-play"><svg viewBox="0 0 24 24"><path d="M6 4l16 8-16 8z" fill="currentColor"/></svg></button>
+        </div>
+        <div class="card-meta">
+          <div class="card-title">${topic}</div>
+          <div class="card-sub">${hostName} · ${dur}</div>
+        </div>
+      `;
+      card.dataset.title = topic;
+      card.dataset.show = `${hostName} · ${hostStyle}`;
+      card.dataset.color = hostColor;
+      card.dataset.letter = letter;
+      card.dataset.len = dur;
+      card.dataset.ai = '1';
+      card.addEventListener('click', () => playFromCard(card));
+
+      // show toast
+      toastTitle.textContent = `«${shortTopic}»`;
+      toastSub.textContent = `${hostName} · ${dur}`;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 5000);
+
+      toastBtn.onclick = () => {
+        toast.classList.remove('show');
+        playFromCard(card);
+      };
+    }, 6500);
+  });
+
+  // ============ PLAYER ============
+  const wave = document.getElementById('waveform');
+  const totalBars = 75;
+  let seed = 42;
+  function rnd() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
+  for (let i = 0; i < totalBars; i++) {
+    const envelope = 0.4 + 0.6 * Math.sin(i * 0.15) * Math.cos(i * 0.07);
+    const noise = rnd() * 0.5;
+    const h = Math.max(0.15, Math.min(1, Math.abs(envelope) * 0.7 + noise));
+    const bar = document.createElement('div');
+    bar.className = 'wave-bar';
+    bar.style.height = (h * 100) + '%';
+    wave.appendChild(bar);
+  }
+
+  let progress = 0;
+  let isPlaying = false;
+  let duration = 312;
+  let speed = 1;
+  const speeds = [1, 1.25, 1.5, 1.75, 2, 0.75];
+  let speedIdx = 0;
+
+  const playBtn = document.getElementById('playBtn');
+  const playIcon = document.getElementById('playIcon');
+  const currentTimeEl = document.getElementById('currentTime');
+  const totalTimeEl = document.getElementById('totalTime');
+  const npTitle = document.getElementById('npTitle');
+  const npShow = document.getElementById('npShow');
+  const npCover = document.getElementById('npCover');
+
+  function fmt(s) {
+    s = Math.max(0, Math.floor(s));
+    const m = Math.floor(s / 60);
+    const sec = (s % 60).toString().padStart(2, '0');
+    return `${m}:${sec}`;
+  }
+
+  function renderProgressBars() {
+    const bars = wave.querySelectorAll('.wave-bar');
+    const pos = Math.floor(progress * totalBars);
+    bars.forEach((b, i) => {
+      b.classList.remove('played', 'current');
+      if (i < pos) b.classList.add('played');
+      else if (i === pos) b.classList.add('current');
+    });
+    currentTimeEl.textContent = fmt(progress * duration);
+    totalTimeEl.textContent = fmt(duration);
+  }
+  function renderProgress() { renderProgressBars(); }
+
+  function setPlaying(v) {
+    if (hasAudio) {
+      if (v) realAudio.play().catch(() => {});
+      else realAudio.pause();
+      return;
+    }
+    isPlaying = v;
+    if (v) {
+      playIcon.innerHTML = '<path d="M6 4h4v16H6zM14 4h4v16h-4z"/>';
+    } else {
+      playIcon.innerHTML = '<path d="M6 4l16 8-16 8z"/>';
+    }
+  }
+  playBtn.addEventListener('click', () => setPlaying(!isPlaying));
+
+  document.getElementById('wavePlay').addEventListener('click', () => {
+    npTitle.textContent = 'Моя волна';
+    npShow.textContent = 'Персональный поток ИИ';
+    npCover.textContent = '∞';
+    npCover.style.background = 'linear-gradient(135deg, #c8462a, #1a1410)';
+    if (hasAudio) {
+      duration = realAudio.duration || 999;
+      realAudio.currentTime = 0;
+      setPlaying(true);
+    } else {
+      duration = 999;
+      progress = 0;
+      renderProgress();
+      setPlaying(true);
+    }
+  });
+
+  setInterval(() => {
+    if (isPlaying && !hasAudio) {
+      progress += speed / duration;
+      if (progress >= 1) { progress = 0; setPlaying(false); }
+      renderProgress();
+    }
+  }, 1000);
+
+  wave.addEventListener('click', (e) => {
+    const rect = wave.getBoundingClientRect();
+    const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+    if (hasAudio && realAudio.duration) {
+      realAudio.currentTime = pct * realAudio.duration;
+    } else {
+      progress = pct;
+      renderProgress();
+    }
+  });
+
+  // speed
+  document.getElementById('speedBtn').addEventListener('click', () => {
+    speedIdx = (speedIdx + 1) % speeds.length;
+    speed = speeds[speedIdx];
+    document.getElementById('speedBtn').textContent = speed.toFixed(2).replace(/0$/, '') + '×';
+  });
+
+  // like
+  document.getElementById('likeBtn').addEventListener('click', (e) => {
+    e.currentTarget.classList.toggle('active');
+  });
+
+  // play from card
+  function playFromCard(card) {
+    const title = card.dataset.title;
+    const show = card.dataset.show;
+    const color = card.dataset.color;
+    const letter = card.dataset.letter;
+    const len = card.dataset.len;
+    if (title) npTitle.textContent = title;
+    if (show) npShow.textContent = show;
+    if (letter) npCover.textContent = letter.toUpperCase();
+    if (color) npCover.style.background = `linear-gradient(135deg, ${color}, #1a1410)`;
+    if (hasAudio) {
+      realAudio.currentTime = 0;
+      duration = realAudio.duration || duration;
+      setPlaying(true);
+    } else {
+      if (len) {
+        const parts = len.split(':');
+        duration = parseInt(parts[0]) * 60 + parseInt(parts[1]);
+      }
+      progress = 0;
+      renderProgress();
+      setPlaying(true);
+    }
+  }
+
+  document.querySelectorAll('.card').forEach(card => {
+    if (card.id === 'addCard') return;
+    card.addEventListener('click', () => playFromCard(card));
+  });
+
+  // nav switch
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', () => {
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      item.classList.add('active');
+    });
+  });
+
+  // keyboard shortcuts
+  document.addEventListener('keydown', (e) => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    if (e.code === 'Space') { e.preventDefault(); setPlaying(!isPlaying); }
+    if (e.code === 'ArrowLeft') { progress = Math.max(0, progress - 15/duration); renderProgress(); }
+    if (e.code === 'ArrowRight') { progress = Math.min(1, progress + 30/duration); renderProgress(); }
+    if (e.metaKey && e.key === 'k') { e.preventDefault(); document.querySelector('.search input').focus(); }
+  });
+
+  renderProgress();
+</script>
+
+</body>
+</html>
